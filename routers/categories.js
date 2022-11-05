@@ -50,7 +50,7 @@ router.post('/', async (req, res) => {
 })
 
 router.put('/:id', async (req, res)=> {
-    const category = await Category.findByIdAndUpdate(
+    const product = await Category.findByIdAndUpdate(
         req.params.id,
         {
             name: req.body.name,

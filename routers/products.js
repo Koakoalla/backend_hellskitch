@@ -12,14 +12,7 @@ router.get(`/`, async (req, res) => {
     res.send(productList);
 });
 
-router.get(`/:id`, async (req, res) => {
-    const product = await Product.findById(req.params.id).populate('category');
-   
-    if (!productList) {
-        res.status(500).json({ success: false });
-    }
-    res.send(product);
-});
+
 
 router.get(`/:id`, async (req, res) => {
     const product = await Product.findById(req.params.id).populate('category');
@@ -52,6 +45,53 @@ router.post(`/`, async (req, res) => {
     return res.status(500).send('The product cannot be created') 
     res.send(product);
 })
+
+router.put(`/:id`, async (req, res) => {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(400).send('Invalid Product Id');
+    }
+    const category = await Category.findById(req.body.category);
+    if (!category) return res.status(400).send('Invalid Category');
+
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(400).send('Invalid Product!');
+
+    const file = req.file;
+    let imagepath;
+
+    if (file) {
+        const fileName = file.filename;
+        const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
+        imagepath = `${basePath}${fileName}`;
+    } else {
+        imagepath = product.image;
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+        req.params.id,
+        {
+            name: req.body.name,
+            description: req.body.description,
+            richDescription: req.body.richDescription,
+            image: imagepath,
+            brand: req.body.brand,
+            price: req.body.price,
+            category: req.body.category,
+            countInStock: req.body.countInStock,
+            rating: req.body.rating,
+            numReviews: req.body.numReviews,
+            isFeatured: req.body.isFeatured,
+        },
+        { new: true }
+    );
+
+    if (!updatedProduct)
+        return res.status(500).send('the product cannot be updated!');
+
+    res.send(updatedProduct);
+});
+
+
 // api/
 router.delete('/:id', (req, res) => {
     Product.findByIdAndRemove(req.params.id)
@@ -72,5 +112,7 @@ router.delete('/:id', (req, res) => {
         .catch((err) => {
             return res.status(400).json({ success: false, error: err });
         });
+
+        
 });
 module.exports = router;
