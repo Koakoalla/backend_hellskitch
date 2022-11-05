@@ -2,6 +2,7 @@ const Product = require('../models/product')
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const { Category } = require('../models/category');
 
 router.get(`/`, async (req, res) => {
     const productList = await Product.find();
@@ -27,5 +28,25 @@ router.post(`/count`, (req, res) => {
         })
     })
 })
-
+// api/
+router.delete('/:id', (req, res) => {
+    Product.findByIdAndRemove(req.params.id)
+        .then((product) => {
+            if (product) {
+                return res
+                    .status(200)
+                    .json({
+                        success: true,
+                        message: 'the product is deleted!',
+                    });
+            } else {
+                return res
+                    .status(404)
+                    .json({ success: false, message: 'product not found!' });
+            }
+        })
+        .catch((err) => {
+            return res.status(500).json({ success: false, error: err });
+        });
+});
 module.exports = router;
