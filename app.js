@@ -4,15 +4,18 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const { stringify } = require('nodemon/lib/utils');
-
+const cors = require('cors');
 require('dotenv/config');
 
 const api = process.env.API_URL;
 const ProductRouter = require('./routers/products');
 
+app.use(cors());
+app.options('*', cors());
 //middleware
 app.use(express.json());
 app.use(morgan('tiny'));
+
 
 //routers
 app.use(`${api}/products`, ProductRouter);
