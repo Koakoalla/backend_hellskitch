@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const { Category } = require('../models/category');
+const { route } = require('./categories');
 
 
 router.get(`/`, async (req, res) => {
@@ -142,4 +143,16 @@ router.get(`/get/featured/:count`, async (req, res) => {
     }
     res.send(products);
 });
+
+router.get(`/get/count`, async (req, res) => {
+    const productCount = await Product.countDocuments((count) => count);
+
+    if (!productCount) {
+        res.status(500).json({ success: false });
+    }
+    res.send({
+        productCount: productCount,
+    });
+});
+
 module.exports = router;
