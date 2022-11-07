@@ -35,13 +35,13 @@ router.get('./:id', async(req,res)=> {
 
 })
 router.post('/', async (req, res) => {
-    let category = new Category({
+    let user = new Category({
        name: req.body.name,
        icon: req.body.icon,  
 
        color: req.body.color,
     })
-    category = await category.save();
+    user = await category.save();
 
     if(!category)
     return res.status(404).send('the category cannot be created!')

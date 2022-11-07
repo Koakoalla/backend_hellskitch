@@ -1,10 +1,10 @@
 const {User} = require('../models/user');
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
 
 router.get(`/`, async (req, res) => {
-    const userList = await User.find();
+    const userList = await User.find().select('-passwordHash');
     if (!userList) {
         res.status(500).json({success: false})
     }
